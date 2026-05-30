@@ -44,7 +44,7 @@ jobs:
         run: rm -rf src/app/api
 
       - name: Build with Next.js (static export)
-        run: npx next build
+        run: npx next build --turbopack
 
       - name: Add .nojekyll file
         run: touch ./out/.nojekyll

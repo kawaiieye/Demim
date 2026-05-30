@@ -579,7 +579,8 @@ export async function parseGenericArchive(caseId: string, fileId: string, extrac
           const metadata = await sharp(entry).metadata()
 
           let timestamp: Date | null = null
-          const dateStr = metadata.exif?.DateTimeOriginal || metadata.exif?.CreateDate || ''
+          const exifAny = metadata.exif as Record<string, any> | undefined
+          const dateStr = exifAny?.DateTimeOriginal || exifAny?.CreateDate || ''
           if (dateStr) {
             const parsed = new Date(dateStr.replace(/^(\d{4}):(\d{2}):(\d{2})/, '$1-$2-$3'))
             if (!isNaN(parsed.getTime())) timestamp = parsed
@@ -591,9 +592,9 @@ export async function parseGenericArchive(caseId: string, fileId: string, extrac
 
           let latitude: number | undefined
           let longitude: number | undefined
-          if (metadata.exif?.GPSLatitude && metadata.exif?.GPSLongitude) {
-            latitude = metadata.exif.GPSLatitude
-            longitude = metadata.exif.GPSLongitude
+          if (exifAny?.GPSLatitude && exifAny?.GPSLongitude) {
+            latitude = exifAny.GPSLatitude
+            longitude = exifAny.GPSLongitude
           }
 
           events.push({
