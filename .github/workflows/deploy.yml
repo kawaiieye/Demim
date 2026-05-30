@@ -38,25 +38,13 @@ jobs:
       - name: Generate Prisma client
         run: npx prisma generate
 
-      - name: Temporarily move API routes (static export incompatible)
-        run: |
-          mkdir -p /tmp/api-routes-backup
-          cp -r src/app/api /tmp/api-routes-backup/
-          find src/app/api -name "route.ts" -delete
-          find src/app/api -name "route.js" -delete
+      - name: Remove API routes (incompatible with static export)
+        run: rm -rf src/app/api
 
       - name: Build with Next.js (static export)
         run: npx next build
         env:
           NEXT_STATIC_EXPORT: "true"
-
-      - name: Restore API routes
-        if: always()
-        run: |
-          if [ -d /tmp/api-routes-backup/api ]; then
-            rm -rf src/app/api
-            cp -r /tmp/api-routes-backup/api src/app/api
-          fi
 
       - name: Add .nojekyll file
         run: touch ./out/.nojekyll
