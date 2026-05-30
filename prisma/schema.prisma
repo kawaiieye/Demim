@@ -1,0 +1,52 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Case {
+  id          String   @id @default(cuid())
+  name        String
+  description String   @default("")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  files       File[]
+  events      TimelineEvent[]
+}
+
+model File {
+  id            String   @id @default(cuid())
+  caseId        String
+  case          Case     @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  filename      String
+  originalName  String
+  filePath      String
+  fileSize      Int
+  mimeType      String
+  detectedType  String   @default("unknown")
+  status        String   @default("pending")
+  error         String?
+  createdAt     DateTime @default(now())
+  events        TimelineEvent[]
+}
+
+model TimelineEvent {
+  id          String   @id @default(cuid())
+  caseId      String
+  case        Case     @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  fileId      String?
+  file        File?    @relation(fields: [fileId], references: [id], onDelete: SetNull)
+  timestamp   DateTime
+  source      String
+  title       String
+  description String   @default("")
+  location    String?
+  latitude    Float?
+  longitude   Float?
+  rawData     String?
+  tags        String?
+  createdAt   DateTime @default(now())
+}

@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  osint-timeline:
+    build: .
+    container_name: osint-timeline
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./cases:/app/cases
+      - ./db:/app/db
+    environment:
+      - NODE_ENV=production
+    restart: unless-stopped
