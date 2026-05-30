@@ -17,6 +17,8 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      NEXT_STATIC_EXPORT: "true"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -43,8 +45,6 @@ jobs:
 
       - name: Build with Next.js (static export)
         run: npx next build
-        env:
-          NEXT_STATIC_EXPORT: "true"
 
       - name: Add .nojekyll file
         run: touch ./out/.nojekyll
