@@ -165,7 +165,7 @@ export default function UploadProcess() {
           })
         } else {
           toast.success(`Processed: ${data.eventsExtracted} events extracted`)
-          triggerQuickObservation(currentCaseId)
+          if (currentCaseId) triggerQuickObservation(currentCaseId)
         }
       }
     } catch (error) {
