@@ -576,7 +576,7 @@ export async function parseGenericArchive(caseId: string, fileId: string, extrac
       if (['jpg', 'jpeg', 'png', 'heic', 'heif', 'webp', 'gif', 'bmp', 'tiff'].includes(ext)) {
         try {
           const sharp = (await import('sharp')).default
-          const metadata = await sharp(entry).metadata()
+          const metadata: any = await sharp(entry).metadata()
 
           let timestamp: Date | null = null
           const exifAny = metadata.exif as Record<string, any> | undefined
@@ -875,9 +875,10 @@ export async function parseImageExif(caseId: string, fileId: string, filePath: s
 
   try {
     const sharp = (await import('sharp')).default
-    const metadata = await sharp(filePath).metadata()
+    const metadata: any = await sharp(filePath).metadata()
 
-    const dateStr = metadata.exif?.DateTimeOriginal || metadata.exif?.CreateDate || ''
+    const exifAny = metadata?.exif as Record<string, any> | undefined
+    const dateStr = exifAny?.DateTimeOriginal || exifAny?.CreateDate || ''
     let timestamp: Date | null = null
 
     if (dateStr) {
@@ -894,10 +895,10 @@ export async function parseImageExif(caseId: string, fileId: string, filePath: s
     let longitude: number | undefined
     let location: string | undefined
 
-    if (metadata.exif?.GPSLatitude && metadata.exif?.GPSLongitude) {
-      latitude = metadata.exif.GPSLatitude
-      longitude = metadata.exif.GPSLongitude
-      location = `${latitude.toFixed(4)}, ${longitude.toFixed(4)}`
+    if (exifAny?.GPSLatitude && exifAny?.GPSLongitude) {
+      latitude = exifAny.GPSLatitude
+      longitude = exifAny.GPSLongitude
+      location = `${latitude!.toFixed(4)}, ${longitude!.toFixed(4)}`
     }
 
     const camera = [metadata.make, metadata.model].filter(Boolean).join(' ')
